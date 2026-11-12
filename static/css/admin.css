@@ -2056,3 +2056,45 @@ body.admin-login-body {
     padding: 4px;
   }
 }
+
+/* Mobile Small Devices (Phones under 480px) */
+@media (max-width: 480px) {
+  .admin-topbar {
+    padding: 0 10px;
+    height: 54px;
+  }
+  .admin-content {
+    padding: 14px 10px;
+  }
+  .stat-card {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+  .stat-card-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
+  }
+  .stat-card-value {
+    font-size: 22px;
+  }
+  .card-table-wrap {
+    border-radius: var(--admin-radius-sm);
+  }
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  .admin-btn {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+  .form-card {
+    padding: 16px 14px;
+  }
+  .admin-modal-card {
+    width: 95%;
+    padding: 18px 14px;
+  }
+}

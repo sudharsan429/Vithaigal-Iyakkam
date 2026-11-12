@@ -2032,6 +2032,13 @@ textarea.form-control {
   }
   .mobile-nav-toggle {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .lead-card {
+    height: 380px;
   }
   .articles-grid {
     grid-template-columns: 1fr;
@@ -2056,6 +2063,109 @@ textarea.form-control {
   }
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+  .filter-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .filter-toolbar .filter-group {
+    width: 100%;
+  }
+  .filter-toolbar input[name="q"],
+  .filter-toolbar .filter-select {
+    width: 100% !important;
+  }
+}
+
+/* Mobile Small Devices (Phones under 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .top-bar {
+    padding: 6px 0;
+  }
+  .top-bar .container {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+  .top-bar-left,
+  .top-bar-right {
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .top-bar-date {
+    font-size: 11.5px;
+  }
+  .top-btn {
+    padding: 3px 8px;
+    font-size: 11px;
+    min-height: 32px;
+  }
+  .header-inner {
+    padding: 8px 0;
+  }
+  .logo-img {
+    height: 52px;
+    width: 52px;
+  }
+  .logo-brand-name {
+    font-size: 20px;
+    line-height: 1.15;
+  }
+  .logo-brand-sub {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+  }
+  .lead-card {
+    height: 300px;
+  }
+  .lead-card-body {
+    padding: 14px;
+  }
+  .lead-title {
+    font-size: 17px;
+    line-height: 1.35;
+  }
+  .lead-card-excerpt {
+    display: none;
+  }
+  .article-main-title {
+    font-size: 20px;
+    line-height: 1.35;
+  }
+  .article-meta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .article-content {
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+  .article-content p {
+    margin-bottom: 16px;
+  }
+  .article-share-bar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .share-pill-btn {
+    padding: 6px 10px;
+    font-size: 11.5px;
+  }
+  .back-to-top-btn {
+    bottom: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    font-size: 13px;
   }
 }
 
@@ -2594,20 +2704,83 @@ html[lang="en"] .logo-brand-name {
 
 @media (max-width: 640px) {
   .polimer-broadcast-card {
-    padding: 14px 14px 16px;
+    padding: 12px 12px 14px;
+    border-radius: var(--radius-md);
   }
   .polimer-tv-graphic-split {
     grid-template-columns: 1fr;
   }
   .polimer-tv-quote-box {
-    padding: 10px 14px;
+    padding: 10px 12px;
   }
   .quote-headline-text {
-    font-size: 12.5px;
+    font-size: 13px;
     -webkit-line-clamp: 2;
   }
   .polimer-live-title {
     font-size: 15.5px;
+    line-height: 1.35;
+  }
+  .polimer-slider-footer {
+    margin-top: 14px;
+    padding-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .polimer-tv-top-bar {
+    height: 32px;
+    padding: 0 8px;
+  }
+  .polimer-clock-capsule {
+    font-size: 9px;
+    padding: 1px 5px;
+    gap: 3px;
+  }
+  .polimer-breaking-banner-text {
+    font-size: 11px;
+    gap: 4px;
+  }
+  .quote-mark-top, .quote-mark-bottom {
+    font-size: 22px;
+  }
+  .quote-headline-text {
+    font-size: 12px;
+  }
+  .polimer-live-title {
+    font-size: 14.5px;
+  }
+  .polimer-channel-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .polimer-channel-name {
+    font-size: 12.5px;
+  }
+  .channel-handle {
+    font-size: 10.5px;
+  }
+  .polimer-stream-desc {
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 0 0 12px;
+  }
+  .polimer-icon-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+  .polimer-arrow-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+  .polimer-dot-btn {
+    width: 8px;
+    height: 8px;
+  }
+  .polimer-dot-btn.active {
+    width: 22px;
   }
 }
 
