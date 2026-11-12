@@ -15,6 +15,8 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_PATH = "/"
+    PREFERRED_URL_SCHEME = "https"
 
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL",

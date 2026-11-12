@@ -144,12 +144,12 @@ def login():
             flash(f"Welcome back, {user.full_name}! / நல்வரவு!", "success")
 
             next_page = request.args.get("next")
-            if (
-                next_page
-                and next_page.startswith("/admin")
-                and not next_page.startswith("/admin/login")
-            ):
-                return redirect(next_page)
+            if next_page and "/admin/login" not in next_page:
+                if "://" in next_page:
+                    from urllib.parse import urlparse
+                    next_page = urlparse(next_page).path
+                if next_page.startswith("/admin"):
+                    return redirect(next_page)
             return redirect(url_for("admin.dashboard"))
         else:
             flash(

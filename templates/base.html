@@ -335,7 +335,7 @@
             <a href="{{ url_for('public.search') }}"><i class="fas fa-chevron-right" style="font-size: 10px;"></i> {% if current_lang == 'ta' %}செய்தித் தேடல்{% else %}Search News{% endif %}</a>
             <a href="{{ url_for('public.bookmarks') }}"><i class="fas fa-chevron-right" style="font-size: 10px;"></i> {% if current_lang == 'ta' %}பிடித்த கட்டுரைகள்{% else %}Saved Bookmarks{% endif %}</a>
             <a href="{{ url_for('public.contact') }}"><i class="fas fa-chevron-right" style="font-size: 10px;"></i> {% if current_lang == 'ta' %}தொடர்புக்கு{% else %}Contact Us{% endif %}</a>
-            <a href="{{ url_for('auth.login') }}"><i class="fas fa-chevron-right" style="font-size: 10px;"></i> {% if current_lang == 'ta' %}நிர்வாகப் பகுதி{% else %}Admin Portal{% endif %}</a>
+            <a href="{{ url_for('admin.dashboard') }}"><i class="fas fa-chevron-right" style="font-size: 10px;"></i> {% if current_lang == 'ta' %}நிர்வாகப் பகுதி{% else %}Admin Portal{% endif %}</a>
           </div>
         </div>
 
@@ -381,7 +381,7 @@
         <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;">
           <a href="{{ url_for('public.contact') }}" style="color: #94a3b8;">Privacy Policy</a>
           <a href="{{ url_for('public.contact') }}" style="color: #94a3b8;">Terms of Service</a>
-          <a href="{{ url_for('auth.login') }}" style="color: #94a3b8;"><i class="fas fa-lock"></i> Staff Login</a>
+          <a href="{{ url_for('admin.dashboard') }}" style="color: #94a3b8;"><i class="fas fa-lock"></i> Staff Login</a>
         </div>
       </div>
     </div>

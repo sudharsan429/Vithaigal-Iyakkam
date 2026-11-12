@@ -97,10 +97,21 @@
           <i class="fas fa-newspaper"></i>
           <span>{% if current_lang == 'ta' %}சமீபத்திய முக்கிய செய்திகள்{% else %}Latest News Stream{% endif %}</span>
         </h2>
-        <a href="{{ url_for('public.search', sort='latest') }}" class="view-all-link">
-          <span>{% if current_lang == 'ta' %}அனைத்தும் பார்க்க{% else %}View All{% endif %}</span>
-          <i class="fas fa-arrow-right"></i>
-        </a>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <!-- Interactive Feed / Grid Mode Toggle -->
+          <div class="feed-layout-switcher" id="feed-layout-switcher">
+            <button type="button" class="layout-pill-btn active" data-mode="feed" title="Compact Feed List">
+              <i class="fas fa-bars"></i>
+            </button>
+            <button type="button" class="layout-pill-btn" data-mode="grid" title="2-Column Grid View">
+              <i class="fas fa-th-large"></i>
+            </button>
+          </div>
+          <a href="{{ url_for('public.search', sort='latest') }}" class="view-all-link">
+            <span>{% if current_lang == 'ta' %}அனைத்தும் பார்க்க{% else %}View All{% endif %}</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
       </div>
 
       <!-- Interactive Filter Tabs -->

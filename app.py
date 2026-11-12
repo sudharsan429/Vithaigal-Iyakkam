@@ -1,8 +1,10 @@
 import os
+import shutil
 
 from flask import Flask, render_template
+from werkzeug.middleware.proxy_fix import ProxyFix
 
-from config import Config
+from config import IS_VERCEL, Config
 from database import db
 from database.seed_data import seed_database
 from routes.admin import admin_bp
@@ -14,6 +16,9 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    # Enable reverse proxy support for Vercel (fixes HTTPS redirects & session cookies)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
     # Ensure upload/instance directories exist.
     # On Vercel the filesystem is read-only (except /tmp), so don't crash if it fails.
     for path in (
@@ -24,6 +29,16 @@ def create_app(config_class=Config):
             os.makedirs(path, exist_ok=True)
         except OSError:
             pass
+
+    # If running on Vercel serverless, populate /tmp/vithaigal.db from repository instance/vithaigal.db
+    if IS_VERCEL:
+        src_db = os.path.join(app.root_path, "instance", "vithaigal.db")
+        dst_db = "/tmp/vithaigal.db"
+        if os.path.exists(src_db) and not os.path.exists(dst_db):
+            try:
+                shutil.copy2(src_db, dst_db)
+            except (OSError, shutil.Error) as e:
+                print(f"Error copying DB to /tmp: {e}")
 
     # Initialize extensions
     db.init_app(app)

@@ -13,12 +13,42 @@ from database.models import (
     Category,
     ContactMessage,
     NewsletterSubscriber,
+    User,
     WebsiteSetting,
 )
 
 
 def seed_database():
-    # Only seed if no categories exist
+    # Guarantee at least one valid administrator account exists
+    admin_user = User.query.filter_by(username="admin").first()
+    if not admin_user:
+        admin_user = User(
+            username="admin",
+            email="admin@vithaigaliyakkam.org",
+            full_name="Chief Administrator",
+            role="admin",
+        )
+        admin_user.set_password("admin123")
+        db.session.add(admin_user)
+        db.session.commit()
+
+    # Also guarantee ARUN account exists with admin123
+    arun_user = User.query.filter_by(username="ARUN").first()
+    if not arun_user:
+        arun_user = User(
+            username="ARUN",
+            email="arun@gmail.com",
+            full_name="Arun (Administrator)",
+            role="admin",
+        )
+        arun_user.set_password("admin123")
+        db.session.add(arun_user)
+        db.session.commit()
+    else:
+        arun_user.set_password("admin123")
+        db.session.commit()
+
+    # Only seed content if no categories exist
     if Category.query.first():
         return
 

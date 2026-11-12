@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollProgressBar();
   initBackToTop();
   initInteractiveFilterTabs();
+  initFeedLayoutSwitcher();
   initArticleToolbar();
   initImageLightbox();
   initVideoLightbox();
@@ -330,6 +331,45 @@ function initInteractiveFilterTabs() {
       });
     });
   });
+}
+
+/* ==========================================================================
+   7B. INTERACTIVE HOMEPAGE FEED / GRID VIEW SWITCHER
+   ========================================================================== */
+function initFeedLayoutSwitcher() {
+  const switcher = document.getElementById('feed-layout-switcher');
+  const targetGrid = document.getElementById('homepage-filterable-grid');
+  if (!switcher || !targetGrid) return;
+
+  const buttons = switcher.querySelectorAll('.layout-pill-btn');
+
+  function setViewMode(mode) {
+    buttons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    if (mode === 'grid') {
+      targetGrid.classList.add('grid-view-active');
+    } else {
+      targetGrid.classList.remove('grid-view-active');
+    }
+    try {
+      localStorage.setItem('vithaigal_feed_mode', mode);
+    } catch (e) {}
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      setViewMode(btn.dataset.mode);
+    });
+  });
+
+  // Restore saved view mode if present
+  try {
+    const saved = localStorage.getItem('vithaigal_feed_mode');
+    if (saved === 'grid') {
+      setViewMode('grid');
+    }
+  } catch (e) {}
 }
 
 /* ==========================================================================
