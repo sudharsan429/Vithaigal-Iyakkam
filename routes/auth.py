@@ -103,6 +103,7 @@ def register():
             db.session.commit()
 
             # Set session
+            session.permanent = True
             session["user_id"] = new_user.id
             session["username"] = new_user.username
             session["full_name"] = new_user.full_name
@@ -119,15 +120,11 @@ def register():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    has_users = User.query.first() is not None
+    # If admin is already authenticated, direct them straight to dashboard
+    if session.get("user_id"):
+        return redirect(url_for("admin.dashboard"))
 
-    if request.method == "GET":
-        # Clear existing admin session when visiting login page
-        # This guarantees that clicking 'Dashboard' from the portal prompts for credentials
-        session.pop("user_id", None)
-        session.pop("username", None)
-        session.pop("full_name", None)
-        session.pop("role", None)
+    has_users = User.query.first() is not None
 
     if request.method == "POST":
         identifier = request.form.get("username", "").strip()
@@ -139,6 +136,7 @@ def login():
         ).first()
 
         if user and user.check_password(password):
+            session.permanent = True
             session["user_id"] = user.id
             session["username"] = user.username
             session["full_name"] = user.full_name

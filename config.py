@@ -1,10 +1,21 @@
 import os
+from datetime import timedelta
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 IS_VERCEL = bool(os.environ.get("VERCEL"))
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "change-me")
+    # Consistent secret key across serverless instances and cold starts
+    SECRET_KEY = os.environ.get(
+        "SECRET_KEY", "vithaigal-iyakkam-secure-persistent-secret-key-2026"
+    )
+    # Retain admin session for 30 days
+    PERMANENT_SESSION_LIFETIME = timedelta(days=30)
+    SESSION_COOKIE_NAME = "vithaigal_admin_session"
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = False
+
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL",
         "sqlite:////tmp/vithaigal.db" if IS_VERCEL

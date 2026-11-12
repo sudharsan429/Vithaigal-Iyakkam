@@ -66,8 +66,8 @@
           <i class="fas fa-moon"></i>
         </button>
 
-        <!-- Admin Portal Dashboard Login Link -->
-        <a href="{{ url_for('auth.login') }}" class="top-btn" title="Dashboard Login">
+        <!-- Admin Portal Dashboard Link -->
+        <a href="{{ url_for('admin.dashboard') }}" class="top-btn" title="Dashboard">
           <i class="fas fa-user-shield"></i>
           <span>Dashboard</span>
         </a>
@@ -426,8 +426,8 @@
           <a href="{{ url_for('public.contact') }}">
             <i class="fas fa-envelope"></i> {% if current_lang == 'ta' %}தொடர்புக்கு{% else %}Contact{% endif %}
           </a>
-          <a href="{{ url_for('auth.login') }}">
-            <i class="fas fa-user-shield"></i> {% if current_lang == 'ta' %}நிர்வாகி உள்நுழைவு{% else %}Admin Login{% endif %}
+          <a href="{{ url_for('admin.dashboard') }}">
+            <i class="fas fa-user-shield"></i> {% if current_lang == 'ta' %}நிர்வாகப் பக்கம்{% else %}Admin Dashboard{% endif %}
           </a>
         </div>
 

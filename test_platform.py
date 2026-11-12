@@ -201,6 +201,14 @@ class TestVithaigalIyakkam(unittest.TestCase):
         )
         self.assertEqual(res_login.status_code, 200)
         self.assertIn(b"Dashboard Overview", res_login.data)
+
+        # Verify persistent session does not prompt for login again
+        res_check_login = self.client.get("/admin/login")
+        self.assertEqual(res_check_login.status_code, 302)
+        self.assertIn("/admin/dashboard", res_check_login.headers["Location"])
+
+        res_check_dash = self.client.get("/admin/dashboard")
+        self.assertEqual(res_check_dash.status_code, 200)
         print("[PASS] test_08_admin_registration_and_login")
 
     def test_09_admin_article_crud(self):
