@@ -1,4 +1,5 @@
 from functools import wraps
+from urllib.parse import urlparse
 
 from flask import (
     Blueprint,
@@ -11,6 +12,7 @@ from flask import (
     url_for,
 )
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
+from werkzeug.security import check_password_hash
 
 from database import db
 from database.models import User
@@ -20,9 +22,51 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/admin")
 REMEMBER_COOKIE_NAME = "vithaigal_remember_admin"
 REMEMBER_MAX_AGE = 30 * 86400  # 30 days
 
+VAULT_COOKIE_NAME = "vithaigal_admin_vault"
+VAULT_MAX_AGE = 365 * 86400  # 365 days
+
 
 def _get_serializer():
     return URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+
+
+def _set_vault_cookie(response, user):
+    """Persist signed admin credentials vault cookie across serverless cold starts."""
+    try:
+        s = _get_serializer()
+        token = s.dumps({
+            "user_id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "full_name": user.full_name,
+            "role": user.role,
+            "password_hash": user.password_hash,
+        })
+        response.set_cookie(
+            VAULT_COOKIE_NAME,
+            token,
+            max_age=VAULT_MAX_AGE,
+            httponly=True,
+            samesite="Lax",
+            secure=False,
+            path="/",
+        )
+    except (TypeError, ValueError) as err:
+        current_app.logger.debug("Failed to set vault cookie: %s", err)
+    return response
+
+
+def _get_vault_data():
+    """Retrieve and decode signed vault cookie payload if available."""
+    token = request.cookies.get(VAULT_COOKIE_NAME)
+    if not token:
+        return None
+    try:
+        s = _get_serializer()
+        return s.loads(token, max_age=VAULT_MAX_AGE)
+    except (BadSignature, SignatureExpired, KeyError, TypeError, ValueError) as err:
+        current_app.logger.debug("Vault cookie decode skipped: %s", err)
+        return None
 
 
 def _restore_user_from_remember_cookie():
@@ -39,7 +83,7 @@ def _restore_user_from_remember_cookie():
         if user_id:
             user = db.session.get(User, user_id)
         if not user and username:
-            user = User.query.filter_by(username=username).first()
+            user = User.query.filter(User.username.ilike(username)).first()
         if not user and username and data.get("password_hash"):
             # Restore user on fresh serverless instance from signed cookie
             user = User()
@@ -49,6 +93,14 @@ def _restore_user_from_remember_cookie():
             user.role = data.get("role", "admin")
             user.password_hash = data.get("password_hash")
             db.session.add(user)
+            db.session.commit()
+        elif (
+            user
+            and data.get("password_hash")
+            and user.password_hash != data.get("password_hash")
+        ):
+            # Sync updated password hash from cookie if local DB is outdated
+            user.password_hash = data.get("password_hash")
             db.session.commit()
 
         if user:
@@ -117,8 +169,8 @@ def register():
         full_name = request.form.get("full_name", "").strip()
         username = request.form.get("username", "").strip()
         email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "")
-        confirm_password = request.form.get("confirm_password", "")
+        password = request.form.get("password", "").strip()
+        confirm_password = request.form.get("confirm_password", "").strip()
 
         # Basic validations
         if not username or not email or not password or not confirm_password:
@@ -152,51 +204,49 @@ def register():
                 "danger",
             )
         else:
-            # Check unique username
-            existing_user = User.query.filter(User.username.ilike(username)).first()
+            # Check if user already exists (by username or email)
+            existing_user = User.query.filter(
+                (User.username.ilike(username)) | (User.email.ilike(email))
+            ).first()
+
             if existing_user:
+                existing_user.username = username
+                existing_user.email = email
+                if full_name:
+                    existing_user.full_name = full_name
+                existing_user.role = "admin"
+                existing_user.set_password(password)
+                db.session.commit()
+                target_user = existing_user
                 flash(
-                    f'Username "{username}" is already taken. Please choose another. / இந்த பயனர் பெயர் ஏற்கனவே உள்ளது.',
-                    "warning",
+                    f"Administrator credentials saved for {target_user.full_name}! / நிர்வாக கணக்கு விபரம் வெற்றிகரமாக சேமிக்கப்பட்டது!",
+                    "success",
                 )
-                return render_template(
-                    "admin/register.html", has_users=has_users, form_data=request.form
-                )
-
-            # Check unique email
-            existing_email = User.query.filter(User.email.ilike(email)).first()
-            if existing_email:
+            else:
+                target_user = User()
+                target_user.username = username
+                target_user.email = email
+                target_user.full_name = full_name or username
+                target_user.role = "admin"
+                target_user.set_password(password)
+                db.session.add(target_user)
+                db.session.commit()
                 flash(
-                    f'Email "{email}" is already registered. Please log in or use another email. / இந்த மின்னஞ்சல் ஏற்கனவே உள்ளது.',
-                    "warning",
+                    f"Registration successful! Welcome to the Editorial Portal, {target_user.full_name}. / நிர்வாக கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது!",
+                    "success",
                 )
-                return render_template(
-                    "admin/register.html", has_users=has_users, form_data=request.form
-                )
-
-            # Create user
-            new_user = User()
-            new_user.username = username
-            new_user.email = email
-            new_user.full_name = full_name or username
-            new_user.role = "admin"
-            new_user.set_password(password)
-            db.session.add(new_user)
-            db.session.commit()
 
             # Set session
             session.permanent = True
-            session["user_id"] = new_user.id
-            session["username"] = new_user.username
-            session["full_name"] = new_user.full_name
-            session["role"] = new_user.role
+            session["user_id"] = target_user.id
+            session["username"] = target_user.username
+            session["full_name"] = target_user.full_name
+            session["role"] = target_user.role
 
-            flash(
-                f"Registration successful! Welcome to the Editorial Portal, {new_user.full_name}. / நிர்வாக கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது!",
-                "success",
-            )
             resp = redirect(url_for("admin.dashboard"))
-            return _set_remember_cookie(resp, new_user)
+            resp = _set_remember_cookie(resp, target_user)
+            resp = _set_vault_cookie(resp, target_user)
+            return resp
 
     return render_template("admin/register.html", has_users=has_users)
 
@@ -211,12 +261,35 @@ def login():
 
     if request.method == "POST":
         identifier = request.form.get("username", "").strip()
-        password = request.form.get("password", "")
+        password = request.form.get("password", "").strip()
 
         # Allow login by either username or email
         user = User.query.filter(
             (User.username.ilike(identifier)) | (User.email.ilike(identifier))
         ).first()
+
+        # Check vault cookie if user is missing or outdated on fresh serverless instance
+        vault_data = _get_vault_data()
+        if vault_data:
+            v_user = vault_data.get("username", "")
+            v_email = vault_data.get("email", "")
+            v_hash = vault_data.get("password_hash", "")
+            if identifier.lower() in (
+                v_user.lower(),
+                v_email.lower(),
+            ) and check_password_hash(v_hash, password):
+                if not user:
+                    user = User()
+                    user.username = v_user
+                    user.email = v_email
+                    user.full_name = vault_data.get("full_name", v_user)
+                    user.role = vault_data.get("role", "admin")
+                    user.password_hash = v_hash
+                    db.session.add(user)
+                    db.session.commit()
+                elif user.password_hash != v_hash:
+                    user.password_hash = v_hash
+                    db.session.commit()
 
         if user and user.check_password(password):
             session.permanent = True
@@ -230,14 +303,14 @@ def login():
             redirect_url = url_for("admin.dashboard")
             if next_page and "/admin/login" not in next_page:
                 if "://" in next_page:
-                    from urllib.parse import urlparse
-
                     next_page = urlparse(next_page).path
                 if next_page.startswith("/admin"):
                     redirect_url = next_page
 
             resp = redirect(redirect_url)
-            return _set_remember_cookie(resp, user)
+            resp = _set_remember_cookie(resp, user)
+            resp = _set_vault_cookie(resp, user)
+            return resp
         else:
             flash(
                 "Invalid username/email or password. Please try again. / தவறான பயனர் பெயர் அல்லது கடவுச்சொல்.",
