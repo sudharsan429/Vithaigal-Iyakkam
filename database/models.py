@@ -23,6 +23,31 @@ class User(db.Model):
     role = db.Column(db.String(20), default="admin")
     created_at = db.Column(db.DateTime, default=utc_now)
 
+    def __init__(
+        self,
+        username=None,
+        email=None,
+        password_hash=None,
+        full_name="Administrator",
+        role="admin",
+        created_at=None,
+        **kwargs,
+    ):
+        if username is not None:
+            self.username = username
+        if email is not None:
+            self.email = email
+        if password_hash is not None:
+            self.password_hash = password_hash
+        if full_name is not None:
+            self.full_name = full_name
+        if role is not None:
+            self.role = role
+        if created_at is not None:
+            self.created_at = created_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -47,6 +72,37 @@ class Category(db.Model):
     created_at = db.Column(db.DateTime, default=utc_now)
 
     articles = db.relationship("Article", back_populates="category", lazy="dynamic")
+
+    def __init__(
+        self,
+        name_en=None,
+        name_ta=None,
+        slug=None,
+        description_en="",
+        description_ta="",
+        icon="newspaper",
+        order_index=0,
+        created_at=None,
+        **kwargs,
+    ):
+        if name_en is not None:
+            self.name_en = name_en
+        if name_ta is not None:
+            self.name_ta = name_ta
+        if slug is not None:
+            self.slug = slug
+        if description_en is not None:
+            self.description_en = description_en
+        if description_ta is not None:
+            self.description_ta = description_ta
+        if icon is not None:
+            self.icon = icon
+        if order_index is not None:
+            self.order_index = order_index
+        if created_at is not None:
+            self.created_at = created_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
     @property
     def article_count(self):
@@ -102,6 +158,82 @@ class Article(db.Model):
     article_views = db.relationship(
         "ArticleView", backref="article", cascade="all, delete-orphan", lazy="dynamic"
     )
+
+    def __init__(
+        self,
+        title=None,
+        title_ta=None,
+        slug=None,
+        summary=None,
+        summary_ta=None,
+        content=None,
+        content_ta=None,
+        category_id=None,
+        category=None,
+        author="Vithaigal Iyakkam Desk",
+        author_ta="விதை இயக்க ஆசிரியர் குழு",
+        featured_image="/static/images/placeholder.jpg",
+        image_caption="",
+        video_url=None,
+        tags="",
+        status="published",
+        views=0,
+        likes=0,
+        is_featured=False,
+        is_trending=False,
+        published_at=None,
+        created_at=None,
+        updated_at=None,
+        **kwargs,
+    ):
+        if title is not None:
+            self.title = title
+        if title_ta is not None:
+            self.title_ta = title_ta
+        if slug is not None:
+            self.slug = slug
+        if summary is not None:
+            self.summary = summary
+        if summary_ta is not None:
+            self.summary_ta = summary_ta
+        if content is not None:
+            self.content = content
+        if content_ta is not None:
+            self.content_ta = content_ta
+        if category_id is not None:
+            self.category_id = category_id
+        if category is not None:
+            self.category = category
+        if author is not None:
+            self.author = author
+        if author_ta is not None:
+            self.author_ta = author_ta
+        if featured_image is not None:
+            self.featured_image = featured_image
+        if image_caption is not None:
+            self.image_caption = image_caption
+        if video_url is not None:
+            self.video_url = video_url
+        if tags is not None:
+            self.tags = tags
+        if status is not None:
+            self.status = status
+        if views is not None:
+            self.views = views
+        if likes is not None:
+            self.likes = likes
+        if is_featured is not None:
+            self.is_featured = is_featured
+        if is_trending is not None:
+            self.is_trending = is_trending
+        if published_at is not None:
+            self.published_at = published_at
+        if created_at is not None:
+            self.created_at = created_at
+        if updated_at is not None:
+            self.updated_at = updated_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
     @property
     def reading_time(self):
@@ -214,6 +346,34 @@ class BreakingNews(db.Model):
     order_index = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=utc_now)
 
+    def __init__(
+        self,
+        title=None,
+        title_ta=None,
+        link_url=None,
+        image_url=None,
+        is_active=True,
+        order_index=0,
+        created_at=None,
+        **kwargs,
+    ):
+        if title is not None:
+            self.title = title
+        if title_ta is not None:
+            self.title_ta = title_ta
+        if link_url is not None:
+            self.link_url = link_url
+        if image_url is not None:
+            self.image_url = image_url
+        if is_active is not None:
+            self.is_active = is_active
+        if order_index is not None:
+            self.order_index = order_index
+        if created_at is not None:
+            self.created_at = created_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
     @property
     def display_image(self):
         if self.image_url and self.image_url != "/static/images/logo.png":
@@ -273,6 +433,25 @@ class ArticleView(db.Model):
     user_agent = db.Column(db.String(255), nullable=True)
     viewed_at = db.Column(db.DateTime, default=utc_now)
 
+    def __init__(
+        self,
+        article_id=None,
+        ip_address=None,
+        user_agent=None,
+        viewed_at=None,
+        **kwargs,
+    ):
+        if article_id is not None:
+            self.article_id = article_id
+        if ip_address is not None:
+            self.ip_address = ip_address
+        if user_agent is not None:
+            self.user_agent = user_agent
+        if viewed_at is not None:
+            self.viewed_at = viewed_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
 
 class Bookmark(db.Model):
     __tablename__ = "bookmarks"
@@ -283,6 +462,22 @@ class Bookmark(db.Model):
     )
     session_id = db.Column(db.String(128), nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=utc_now)
+
+    def __init__(
+        self,
+        article_id=None,
+        session_id=None,
+        created_at=None,
+        **kwargs,
+    ):
+        if article_id is not None:
+            self.article_id = article_id
+        if session_id is not None:
+            self.session_id = session_id
+        if created_at is not None:
+            self.created_at = created_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 
 class ContactMessage(db.Model):
@@ -296,6 +491,31 @@ class ContactMessage(db.Model):
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=utc_now)
 
+    def __init__(
+        self,
+        name=None,
+        email=None,
+        subject=None,
+        message=None,
+        is_read=False,
+        created_at=None,
+        **kwargs,
+    ):
+        if name is not None:
+            self.name = name
+        if email is not None:
+            self.email = email
+        if subject is not None:
+            self.subject = subject
+        if message is not None:
+            self.message = message
+        if is_read is not None:
+            self.is_read = is_read
+        if created_at is not None:
+            self.created_at = created_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
 
 class NewsletterSubscriber(db.Model):
     __tablename__ = "newsletter_subscribers"
@@ -305,6 +525,22 @@ class NewsletterSubscriber(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     subscribed_at = db.Column(db.DateTime, default=utc_now)
 
+    def __init__(
+        self,
+        email=None,
+        is_active=True,
+        subscribed_at=None,
+        **kwargs,
+    ):
+        if email is not None:
+            self.email = email
+        if is_active is not None:
+            self.is_active = is_active
+        if subscribed_at is not None:
+            self.subscribed_at = subscribed_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
 
 class WebsiteSetting(db.Model):
     __tablename__ = "website_settings"
@@ -313,6 +549,22 @@ class WebsiteSetting(db.Model):
     key = db.Column(db.String(64), unique=True, nullable=False)
     value = db.Column(db.Text, default="")
     updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
+
+    def __init__(
+        self,
+        key=None,
+        value="",
+        updated_at=None,
+        **kwargs,
+    ):
+        if key is not None:
+            self.key = key
+        if value is not None:
+            self.value = value
+        if updated_at is not None:
+            self.updated_at = updated_at
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
     @classmethod
     def get_setting(cls, key, default=""):
