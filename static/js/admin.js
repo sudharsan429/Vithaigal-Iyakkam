@@ -61,6 +61,29 @@ function initSidebarDrawer() {
     overlay.addEventListener('click', closeSidebar);
   }
 
+  // Close sidebar on link click in mobile view
+  const sidebarLinks = sidebar.querySelectorAll('.sidebar-menu a');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 1024) {
+        closeSidebar();
+      }
+    });
+  });
+
+  // Touch swipe to dismiss sidebar on mobile
+  let touchStartX = 0;
+  sidebar.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  sidebar.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    if (touchStartX - touchEndX > 50) {
+      closeSidebar();
+    }
+  }, { passive: true });
+
   // Close with Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {

@@ -114,6 +114,11 @@
     </a>
   </div>
 
+  <div class="mobile-scroll-hint">
+    <i class="fas fa-arrows-alt-h"></i> 
+    {% if current_lang == 'ta' %}அட்டவணையை முழுமையாகக் காண பக்கவாட்டில் நகர்த்தவும் (Swipe table){% else %}Swipe horizontally to view full table{% endif %}
+  </div>
+
   <table class="admin-table">
     <thead>
       <tr>
@@ -185,6 +190,11 @@
     <a href="{{ url_for('admin.messages') }}" class="admin-btn admin-btn-secondary admin-btn-sm">
       All Messages ({{ stats.total_messages }}) <i class="fas fa-arrow-right"></i>
     </a>
+  </div>
+
+  <div class="mobile-scroll-hint">
+    <i class="fas fa-arrows-alt-h"></i> 
+    {% if current_lang == 'ta' %}அட்டவணையை முழுமையாகக் காண பக்கவாட்டில் நகர்த்தவும் (Swipe table){% else %}Swipe horizontally to view full table{% endif %}
   </div>
 
   <table class="admin-table">
