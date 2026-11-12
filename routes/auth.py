@@ -19,8 +19,8 @@ from database.models import User
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/admin")
 
+# Legacy cookie name to clear on login/logout so devices will never auto-bypass password
 REMEMBER_COOKIE_NAME = "vithaigal_remember_admin"
-REMEMBER_MAX_AGE = 30 * 86400  # 30 days
 
 VAULT_COOKIE_NAME = "vithaigal_admin_vault"
 VAULT_MAX_AGE = 365 * 86400  # 365 days
@@ -31,7 +31,10 @@ def _get_serializer():
 
 
 def _set_vault_cookie(response, user):
-    """Persist signed admin credentials vault cookie across serverless cold starts."""
+    """Persist signed admin credentials vault cookie across serverless cold starts.
+    NOTE: This vault is only used to verify entered passwords during POST /admin/login;
+    it never bypasses password entry or auto-authenticates the user.
+    """
     try:
         s = _get_serializer()
         token = s.dumps({
@@ -69,89 +72,15 @@ def _get_vault_data():
         return None
 
 
-def _restore_user_from_remember_cookie():
-    """Attempt to restore admin session from signed remember cookie."""
-    token = request.cookies.get(REMEMBER_COOKIE_NAME)
-    if not token:
-        return None
-    try:
-        s = _get_serializer()
-        data = s.loads(token, max_age=REMEMBER_MAX_AGE)
-        user_id = data.get("user_id")
-        username = data.get("username")
-        user = None
-        if user_id:
-            user = db.session.get(User, user_id)
-        if not user and username:
-            user = User.query.filter(User.username.ilike(username)).first()
-        if not user and username and data.get("password_hash"):
-            # Restore user on fresh serverless instance from signed cookie
-            user = User()
-            user.username = username
-            user.email = data.get("email", f"{username.lower()}@vithaigaliyakkam.org")
-            user.full_name = data.get("full_name", username)
-            user.role = data.get("role", "admin")
-            user.password_hash = data.get("password_hash")
-            db.session.add(user)
-            db.session.commit()
-        elif (
-            user
-            and data.get("password_hash")
-            and user.password_hash != data.get("password_hash")
-        ):
-            # Sync updated password hash from cookie if local DB is outdated
-            user.password_hash = data.get("password_hash")
-            db.session.commit()
-
-        if user:
-            session.permanent = True
-            session["user_id"] = user.id
-            session["username"] = user.username
-            session["full_name"] = user.full_name
-            session["role"] = user.role
-            return user
-    except (BadSignature, SignatureExpired, KeyError, TypeError, ValueError) as err:
-        current_app.logger.debug("Remember cookie validation skipped: %s", err)
-    return None
-
-
-def _set_remember_cookie(response, user):
-    """Set 30-day signed persistent remember cookie on response."""
-    try:
-        s = _get_serializer()
-        token = s.dumps({
-            "user_id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "full_name": user.full_name,
-            "role": user.role,
-            "password_hash": user.password_hash,
-        })
-        response.set_cookie(
-            REMEMBER_COOKIE_NAME,
-            token,
-            max_age=REMEMBER_MAX_AGE,
-            httponly=True,
-            samesite="Lax",
-            secure=False,
-            path="/",
-        )
-    except (TypeError, ValueError) as err:
-        current_app.logger.debug("Failed to set remember cookie: %s", err)
-    return response
-
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get("user_id"):
-            user = _restore_user_from_remember_cookie()
-            if not user:
-                flash(
-                    "Please log in to access the administration dashboard. / நிர்வாக பக்கத்திற்கு உள்நுழையவும்.",
-                    "warning",
-                )
-                return redirect(url_for("auth.login", next=request.url))
+            flash(
+                "Please enter your admin credentials to access the administration dashboard. / நிர்வாக பக்கத்தை அணுக உங்கள் கடவுச்சொல்லை உள்ளிடவும்.",
+                "warning",
+            )
+            return redirect(url_for("auth.login", next=request.url))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -160,7 +89,7 @@ def login_required(f):
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     """Admin registration endpoint so administrators can register their own account."""
-    if session.get("user_id") or _restore_user_from_remember_cookie():
+    if session.get("user_id"):
         return redirect(url_for("admin.dashboard"))
 
     has_users = User.query.first() is not None
@@ -244,8 +173,8 @@ def register():
             session["role"] = target_user.role
 
             resp = redirect(url_for("admin.dashboard"))
-            resp = _set_remember_cookie(resp, target_user)
             resp = _set_vault_cookie(resp, target_user)
+            resp.delete_cookie(REMEMBER_COOKIE_NAME, path="/")
             return resp
 
     return render_template("admin/register.html", has_users=has_users)
@@ -253,8 +182,8 @@ def register():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    # If admin is already authenticated or has valid persistent cookie, direct them straight to dashboard
-    if session.get("user_id") or _restore_user_from_remember_cookie():
+    # If admin is already actively authenticated in this session, direct them straight to dashboard
+    if session.get("user_id"):
         return redirect(url_for("admin.dashboard"))
 
     has_users = User.query.first() is not None
@@ -308,8 +237,8 @@ def login():
                     redirect_url = next_page
 
             resp = redirect(redirect_url)
-            resp = _set_remember_cookie(resp, user)
             resp = _set_vault_cookie(resp, user)
+            resp.delete_cookie(REMEMBER_COOKIE_NAME, path="/")
             return resp
         else:
             flash(
@@ -326,4 +255,5 @@ def logout():
     flash("You have been securely logged out. / வெற்றிகரமாக வெளியேறிவிட்டீர்கள்.", "info")
     resp = redirect(url_for("auth.login"))
     resp.delete_cookie(REMEMBER_COOKIE_NAME, path="/")
+    resp.delete_cookie(current_app.config.get("SESSION_COOKIE_NAME", "vithaigal_admin_session"), path="/")
     return resp

@@ -64,6 +64,12 @@ def set_language(lang):
 
 
 # --- DASHBOARD ---
+@admin_bp.route("/")
+@login_required
+def admin_root():
+    return redirect(url_for("admin.dashboard"))
+
+
 @admin_bp.route("/dashboard")
 @login_required
 def dashboard():
