@@ -135,7 +135,8 @@ function initBreakingNewsSlider() {
   // Update slide position
   function goToSlide(index) {
     currentSlide = (index + totalSlides) % totalSlides;
-    track.style.transform = `translate3d(-${currentSlide * 100}%, 0, 0)`;
+    const slideWidth = viewport.getBoundingClientRect().width || viewport.clientWidth;
+    track.style.transform = `translate3d(-${currentSlide * slideWidth}px, 0, 0)`;
 
     // Update Counter
     if (counterEl) {
@@ -247,6 +248,14 @@ function initBreakingNewsSlider() {
     startAutoplay();
     touchStartX = 0;
     touchEndX = 0;
+  });
+
+  // Responsive recalculation on resize / orientation change
+  window.addEventListener('resize', () => {
+    goToSlide(currentSlide);
+  });
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => goToSlide(currentSlide), 150);
   });
 
   // Launch initial slide and start continuous autoplay

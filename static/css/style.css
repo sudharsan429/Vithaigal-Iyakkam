@@ -83,6 +83,10 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -93,6 +97,11 @@ body {
   font-size: 15px;
   transition: background-color 0.3s ease, color 0.3s ease;
   overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
 /* Tamil Typography Enhancement */
@@ -107,7 +116,7 @@ a {
   transition: var(--transition);
 }
 
-img {
+img, video, iframe, object, embed {
   max-width: 100%;
   height: auto;
   display: block;
@@ -121,12 +130,15 @@ button, input, select, textarea {
   font: inherit;
   border: none;
   outline: none;
+  box-sizing: border-box;
 }
 
 .container {
+  width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 20px;
+  box-sizing: border-box;
 }
 
 /* ==========================================================================
@@ -1999,180 +2011,7 @@ textarea.form-control {
 }
 
 /* ==========================================================================
-   RESPONSIVE DESIGN BREAKPOINTS
-   ========================================================================== */
-@media (max-width: 1024px) {
-  .hero-news-grid {
-    grid-template-columns: 1fr;
-  }
-  .lead-card {
-    height: 420px;
-  }
-  .sub-featured-grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-  }
-  .main-content-layout {
-    grid-template-columns: 1fr;
-  }
-  .video-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .top-bar-tagline {
-    display: none;
-  }
-  .search-container {
-    display: none; /* Accessible in mobile drawer */
-  }
-  .mobile-nav-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-  }
-  .lead-card {
-    height: 380px;
-  }
-  .articles-grid {
-    grid-template-columns: 1fr;
-  }
-  .sub-featured-grid {
-    grid-template-columns: 1fr;
-  }
-  .video-grid {
-    grid-template-columns: 1fr;
-  }
-  .newsletter-inner {
-    grid-template-columns: 1fr;
-  }
-  .newsletter-form-wrap {
-    flex-direction: column;
-  }
-  .article-main-title {
-    font-size: 24px;
-  }
-  .contact-layout {
-    grid-template-columns: 1fr;
-  }
-  .footer-grid {
-    grid-template-columns: 1fr;
-  }
-  .filter-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-  .filter-toolbar .filter-group {
-    width: 100%;
-  }
-  .filter-toolbar input[name="q"],
-  .filter-toolbar .filter-select {
-    width: 100% !important;
-  }
-}
-
-/* Mobile Small Devices (Phones under 480px) */
-@media (max-width: 480px) {
-  .container {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .top-bar {
-    padding: 6px 0;
-  }
-  .top-bar .container {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    text-align: center;
-  }
-  .top-bar-left,
-  .top-bar-right {
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-    width: 100%;
-  }
-  .top-bar-date {
-    font-size: 11.5px;
-  }
-  .top-btn {
-    padding: 3px 8px;
-    font-size: 11px;
-    min-height: 32px;
-  }
-  .header-inner {
-    padding: 8px 0;
-  }
-  .logo-img {
-    height: 52px;
-    width: 52px;
-  }
-  .logo-brand-name {
-    font-size: 20px;
-    line-height: 1.15;
-  }
-  .logo-brand-sub {
-    font-size: 9px;
-    letter-spacing: 1.5px;
-  }
-  .lead-card {
-    height: 300px;
-  }
-  .lead-card-body {
-    padding: 14px;
-  }
-  .lead-title {
-    font-size: 17px;
-    line-height: 1.35;
-  }
-  .lead-card-excerpt {
-    display: none;
-  }
-  .article-main-title {
-    font-size: 20px;
-    line-height: 1.35;
-  }
-  .article-meta-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .article-content {
-    font-size: 15.5px;
-    line-height: 1.75;
-  }
-  .article-content p {
-    margin-bottom: 16px;
-  }
-  .article-share-bar {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .share-pill-btn {
-    padding: 6px 10px;
-    font-size: 11.5px;
-  }
-  .back-to-top-btn {
-    bottom: 16px;
-    right: 16px;
-    width: 40px;
-    height: 40px;
-    font-size: 13px;
-  }
-}
-
-
-
-/* ==========================================================================
-   INTERACTIVE ENHANCEMENTS & MULTI-CARD BREAKING NEWS SLIDER
+   INTERACTIVE ENHANCEMENTS & BRANDING DETAILS
    ========================================================================== */
 
 /* Logo Brand Details (Clean, Enlarged & Completely Static / No Movement) */
@@ -2276,12 +2115,16 @@ html[lang="en"] .logo-brand-name {
 .polimer-slider-viewport {
   overflow: hidden;
   width: 100%;
+  max-width: 100%;
   position: relative;
+  box-sizing: border-box;
 }
 
 .polimer-slider-track {
   display: flex;
-  transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+  width: 100%;
+  min-width: 0;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
 }
 
@@ -2289,6 +2132,7 @@ html[lang="en"] .logo-brand-name {
 .polimer-slide-item {
   flex: 0 0 100%;
   width: 100%;
+  min-width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   display: grid;
@@ -2475,10 +2319,16 @@ html[lang="en"] .logo-brand-name {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .polimer-meta-headline-row {
   margin-bottom: 12px;
+  min-width: 0;
+  width: 100%;
 }
 
 .polimer-live-title {
@@ -2487,6 +2337,8 @@ html[lang="en"] .logo-brand-name {
   font-weight: 800;
   line-height: 1.4;
   margin: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .polimer-live-title a {
@@ -2692,96 +2544,6 @@ html[lang="en"] .logo-brand-name {
   color: var(--text-muted);
   margin: 0 6px;
   font-variant-numeric: tabular-nums;
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-  .polimer-slide-item {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-}
-
-@media (max-width: 640px) {
-  .polimer-broadcast-card {
-    padding: 12px 12px 14px;
-    border-radius: var(--radius-md);
-  }
-  .polimer-tv-graphic-split {
-    grid-template-columns: 1fr;
-  }
-  .polimer-tv-quote-box {
-    padding: 10px 12px;
-  }
-  .quote-headline-text {
-    font-size: 13px;
-    -webkit-line-clamp: 2;
-  }
-  .polimer-live-title {
-    font-size: 15.5px;
-    line-height: 1.35;
-  }
-  .polimer-slider-footer {
-    margin-top: 14px;
-    padding-top: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .polimer-tv-top-bar {
-    height: 32px;
-    padding: 0 8px;
-  }
-  .polimer-clock-capsule {
-    font-size: 9px;
-    padding: 1px 5px;
-    gap: 3px;
-  }
-  .polimer-breaking-banner-text {
-    font-size: 11px;
-    gap: 4px;
-  }
-  .quote-mark-top, .quote-mark-bottom {
-    font-size: 22px;
-  }
-  .quote-headline-text {
-    font-size: 12px;
-  }
-  .polimer-live-title {
-    font-size: 14.5px;
-  }
-  .polimer-channel-avatar {
-    width: 30px;
-    height: 30px;
-  }
-  .polimer-channel-name {
-    font-size: 12.5px;
-  }
-  .channel-handle {
-    font-size: 10.5px;
-  }
-  .polimer-stream-desc {
-    font-size: 12px;
-    line-height: 1.45;
-    margin: 0 0 12px;
-  }
-  .polimer-icon-btn {
-    width: 34px;
-    height: 34px;
-    font-size: 12px;
-  }
-  .polimer-arrow-btn {
-    width: 30px;
-    height: 30px;
-    font-size: 11px;
-  }
-  .polimer-dot-btn {
-    width: 8px;
-    height: 8px;
-  }
-  .polimer-dot-btn.active {
-    width: 22px;
-  }
 }
 
 /* Floating Back to Top Button */
@@ -3105,4 +2867,552 @@ html[lang="en"] .logo-brand-name {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.12);
   animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE DESIGN & MOBILE STABILITY OVERRIDES
+   ========================================================================== */
+
+/* Tablet Breakpoint (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .hero-news-grid {
+    grid-template-columns: 1fr;
+  }
+  .lead-card {
+    height: 420px;
+  }
+  .sub-featured-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  .main-content-layout {
+    grid-template-columns: 1fr;
+  }
+  .video-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mobile & Small Tablet Breakpoint (max-width: 768px) */
+@media (max-width: 768px) {
+  html, body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    position: relative;
+  }
+
+  .container {
+    padding-left: 14px;
+    padding-right: 14px;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Top Bar */
+  .top-bar-tagline {
+    display: none;
+  }
+  .top-bar {
+    padding: 6px 0;
+  }
+  .top-bar .container {
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+  }
+  .top-bar-left,
+  .top-bar-right {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+  .top-bar-date {
+    font-size: 12px;
+  }
+  .top-btn {
+    font-size: 11.5px;
+    padding: 3px 8px;
+    min-height: 30px;
+  }
+
+  /* Main Header */
+  .search-container {
+    display: none; /* Accessible in mobile drawer */
+  }
+  .header-inner {
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px 0;
+  }
+  .logo-wrapper {
+    max-width: calc(100% - 54px);
+    gap: 12px;
+    min-width: 0;
+  }
+  .logo-img {
+    width: 56px !important;
+    height: 56px !important;
+    flex-shrink: 0;
+  }
+  .logo-brand-details {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .logo-brand-name {
+    font-size: 22px !important;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .logo-brand-sub {
+    font-size: 9.5px !important;
+    letter-spacing: 1.5px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mobile-nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    min-height: 42px;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+  }
+
+  /* Main Navigation */
+  .main-nav {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  .main-nav .container {
+    padding: 0 8px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .nav-list {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-link {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  /* Polimer Breaking News Live TV Section */
+  .polimer-breaking-section {
+    margin: 14px 0 24px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .polimer-broadcast-card {
+    padding: 14px 12px 14px;
+    border-radius: var(--radius-md);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .polimer-slider-viewport {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .polimer-slider-track {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+  }
+  .polimer-slide-item {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+    box-sizing: border-box;
+  }
+  .polimer-tv-screen {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .polimer-tv-top-bar {
+    height: 32px;
+    padding: 0 8px;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  .polimer-clock-capsule {
+    font-size: 9.5px;
+    padding: 2px 5px;
+    gap: 3px;
+    max-width: 55%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .polimer-breaking-banner-text {
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .polimer-tv-graphic-split {
+    grid-template-columns: 1fr 1.15fr;
+    height: calc(100% - 32px);
+    min-height: 0;
+  }
+  .polimer-tv-quote-box {
+    padding: 8px 10px;
+  }
+  .quote-headline-text {
+    font-size: 12px;
+    line-height: 1.35;
+    -webkit-line-clamp: 3;
+  }
+  .quote-mark-top, .quote-mark-bottom {
+    font-size: 18px;
+  }
+  .polimer-details-column {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  .polimer-live-title {
+    font-size: 15.5px;
+    line-height: 1.35;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+  .polimer-channel-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .polimer-badges-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .polimer-stream-desc {
+    font-size: 12.5px;
+    line-height: 1.45;
+    margin: 0 0 12px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* News Grids & Cards */
+  .lead-card {
+    height: 360px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .articles-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
+  }
+  .article-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .sub-featured-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Video Section */
+  .video-section {
+    padding: 28px 0;
+    margin: 28px 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Newsletter Banner */
+  .newsletter-banner {
+    padding: 24px 18px;
+    margin: 28px 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  .newsletter-inner {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .newsletter-form-wrap {
+    flex-direction: column;
+    width: 100%;
+  }
+  .newsletter-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Article Details & Miscellaneous */
+  .article-main-title {
+    font-size: 22px;
+  }
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .footer-bottom > div {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .filter-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .filter-toolbar .filter-group {
+    width: 100%;
+  }
+  .filter-toolbar input[name="q"],
+  .filter-toolbar .filter-select {
+    width: 100% !important;
+  }
+}
+
+/* Small Smartphone Breakpoint (max-width: 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    padding: 5px 0;
+  }
+  .top-bar-date {
+    font-size: 11px;
+  }
+  .top-btn {
+    padding: 3px 6px;
+    font-size: 10.5px;
+    min-height: 28px;
+  }
+  .lang-pill {
+    padding: 2px 6px;
+    font-size: 10.5px;
+  }
+
+  /* Main Header */
+  .header-inner {
+    padding: 6px 0;
+  }
+  .logo-wrapper {
+    gap: 10px;
+  }
+  .logo-img {
+    height: 46px !important;
+    width: 46px !important;
+  }
+  .logo-brand-name {
+    font-size: 18px !important;
+  }
+  .logo-brand-sub {
+    font-size: 8px !important;
+    letter-spacing: 1px !important;
+  }
+  .mobile-nav-toggle {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 18px;
+  }
+
+  /* Polimer Breaking News Section */
+  .polimer-broadcast-card {
+    padding: 10px 8px 12px;
+    border-radius: 8px;
+  }
+  .polimer-tv-screen {
+    border-radius: 6px;
+  }
+  .polimer-tv-top-bar {
+    height: 28px;
+    padding: 0 6px;
+  }
+  .polimer-clock-capsule {
+    font-size: 8.5px;
+    padding: 1px 4px;
+    gap: 2px;
+    max-width: 52%;
+  }
+  .polimer-clock-capsule .capsule-date {
+    display: none;
+  }
+  .polimer-clock-capsule .capsule-divider {
+    display: none;
+  }
+  .polimer-breaking-banner-text {
+    font-size: 9.5px;
+    gap: 3px;
+  }
+  .banner-pulse-dot {
+    width: 5px;
+    height: 5px;
+  }
+  .polimer-tv-graphic-split {
+    height: calc(100% - 28px);
+    grid-template-columns: 1fr 1.15fr;
+  }
+  .polimer-tv-quote-box {
+    padding: 4px 6px;
+    border-left-width: 2.5px;
+  }
+  .quote-headline-text {
+    font-size: 9.5px;
+    line-height: 1.28;
+    -webkit-line-clamp: 3;
+  }
+  .quote-mark-top, .quote-mark-bottom {
+    font-size: 13px;
+    margin: 0;
+  }
+  .polimer-live-title {
+    font-size: 13.5px;
+    line-height: 1.35;
+  }
+  .polimer-channel-avatar {
+    width: 26px;
+    height: 26px;
+  }
+  .polimer-channel-name {
+    font-size: 11.5px;
+  }
+  .channel-handle {
+    font-size: 9.5px;
+  }
+  .polimer-stream-desc {
+    font-size: 11.5px;
+    line-height: 1.4;
+    margin: 0 0 10px;
+  }
+  .polimer-icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 10.5px;
+  }
+  .polimer-arrow-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 9.5px;
+  }
+  .polimer-dot-btn {
+    width: 6px;
+    height: 6px;
+  }
+  .polimer-dot-btn.active {
+    width: 18px;
+  }
+  .polimer-counter {
+    font-size: 11px;
+  }
+
+  /* Cards & Details */
+  .lead-card {
+    height: 280px;
+  }
+  .lead-card-body {
+    padding: 12px;
+  }
+  .lead-title {
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  .lead-card-excerpt {
+    display: none;
+  }
+  .sub-lead-card {
+    height: 190px;
+  }
+  .card-title {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .card-body {
+    padding: 12px;
+  }
+  .section-title {
+    font-size: 17px;
+  }
+  .article-main-title {
+    font-size: 18px;
+    line-height: 1.35;
+  }
+  .article-meta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .article-content {
+    font-size: 14.5px;
+    line-height: 1.7;
+  }
+  .article-content p {
+    margin-bottom: 14px;
+  }
+  .article-share-bar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .share-pill-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  .back-to-top-btn {
+    bottom: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    font-size: 12px;
+  }
 }

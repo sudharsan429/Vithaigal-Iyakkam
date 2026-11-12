@@ -2,7 +2,7 @@
 <html lang="{{ current_lang }}">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>{% block title %}{{ settings.get('site_name_ta', 'விதைகள் இயக்கம்') if current_lang == 'ta' else settings.get('site_name_en', 'Vithaigal Iyakkam') }}{% endblock %} - {{ settings.get('site_tagline_ta', 'உண்மை மற்றும் சமூக முன்னேற்றத்திற்கான செய்தித் தளம்') if current_lang == 'ta' else settings.get('site_tagline_en', 'Digital News & Content Publishing Platform') }}</title>
   
   <meta name="description" content="{% block meta_desc %}{{ settings.get('site_about_ta' if current_lang == 'ta' else 'site_about_en', 'Tamil digital news, Keezhadi archaeological history, Tamil Nadu politics, India, World, Cinema, Jobs and video journalism.') }}{% endblock %}">
@@ -378,7 +378,7 @@
         <div>
           &copy; {{ now.year }} <strong>{{ settings.get('site_name_ta', 'விதைகள் இயக்கம்') if current_lang == 'ta' else settings.get('site_name_en', 'Vithaigal Iyakkam') }}</strong>. {% if current_lang == 'ta' %}அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.{% else %}All Rights Reserved.{% endif %}
         </div>
-        <div style="display: flex; gap: 16px;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;">
           <a href="{{ url_for('public.contact') }}" style="color: #94a3b8;">Privacy Policy</a>
           <a href="{{ url_for('public.contact') }}" style="color: #94a3b8;">Terms of Service</a>
           <a href="{{ url_for('auth.login') }}" style="color: #94a3b8;"><i class="fas fa-lock"></i> Staff Login</a>
