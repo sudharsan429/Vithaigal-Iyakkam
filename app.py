@@ -14,9 +14,16 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Ensure upload directory exists
-    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-    os.makedirs(os.path.join(app.root_path, "instance"), exist_ok=True)
+    # Ensure upload/instance directories exist.
+    # On Vercel the filesystem is read-only (except /tmp), so don't crash if it fails.
+    for path in (
+        app.config["UPLOAD_FOLDER"],
+        os.path.join(app.root_path, "instance"),
+    ):
+        try:
+            os.makedirs(path, exist_ok=True)
+        except OSError:
+            pass
 
     # Initialize extensions
     db.init_app(app)
