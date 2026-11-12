@@ -470,9 +470,11 @@ def contact():
             )
             return render_template("contact.html")
 
-        new_msg = ContactMessage(
-            name=name, email=email, subject=subject, message=message
-        )
+        new_msg = ContactMessage()
+        new_msg.name = name
+        new_msg.email = email
+        new_msg.subject = subject
+        new_msg.message = message
         db.session.add(new_msg)
         db.session.commit()
 

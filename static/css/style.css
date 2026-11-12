@@ -1024,6 +1024,7 @@ button, input, select, textarea {
   padding: 12px 18px;
   background: var(--bg-surface);
   border: 1px solid var(--border-light);
+  border-left: none !important;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
   margin-bottom: 18px;

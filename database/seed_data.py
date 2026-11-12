@@ -13,42 +13,12 @@ from database.models import (
     Category,
     ContactMessage,
     NewsletterSubscriber,
-    User,
     WebsiteSetting,
 )
 
 
 def seed_database():
-    # Guarantee at least one valid administrator account exists
-    admin_user = User.query.filter_by(username="admin").first()
-    if not admin_user:
-        admin_user = User(
-            username="admin",
-            email="admin@vithaigaliyakkam.org",
-            full_name="Chief Administrator",
-            role="admin",
-        )
-        admin_user.set_password("admin123")
-        db.session.add(admin_user)
-        db.session.commit()
-
-    # Also guarantee ARUN account exists with admin123
-    arun_user = User.query.filter_by(username="ARUN").first()
-    if not arun_user:
-        arun_user = User(
-            username="ARUN",
-            email="arun@gmail.com",
-            full_name="Arun (Administrator)",
-            role="admin",
-        )
-        arun_user.set_password("admin123")
-        db.session.add(arun_user)
-        db.session.commit()
-    else:
-        arun_user.set_password("admin123")
-        db.session.commit()
-
-    # Only seed content if no categories exist
+    # Only seed initial content if no categories exist
     if Category.query.first():
         return
 
@@ -587,14 +557,13 @@ def seed_database():
         db.session.add(WebsiteSetting(key=k, value=v))
 
     # 6. Sample Contact Message for immediate admin dashboard preview
-    msg = ContactMessage(
-        name="மு. சுந்தரபாண்டியன்",
-        email="sundar.p@gmail.com",
-        subject="கீழடி வரலாற்று கட்டுரைகள் பாராட்டு",
-        message="வணக்கம்! உங்கள் விதை இயக்கம் இணையதளத்தில் வெளியாகும் கீழடி மற்றும் சங்க கால வரலாற்று கட்டுரைகள் மாணவர்களுக்கும் பொதுமக்களுக்கும் அளப்பரிய பயனைத் தருகின்றன. தொடர்ந்து இதுபோன்ற சிறப்புக் கட்டுரைகளை வெளியிடுங்கள். வாழ்த்துகள்!",
-        is_read=False,
-        created_at=datetime.now(UTC) - timedelta(hours=6),
-    )
+    msg = ContactMessage()
+    msg.name = "மு. சுந்தரபாண்டியன்"
+    msg.email = "sundar.p@gmail.com"
+    msg.subject = "கீழடி வரலாற்று கட்டுரைகள் பாராட்டு"
+    msg.message = "வணக்கம்! உங்கள் விதை இயக்கம் இணையதளத்தில் வெளியாகும் கீழடி மற்றும் சங்க கால வரலாற்று கட்டுரைகள் மாணவர்களுக்கும் பொதுமக்களுக்கும் அளப்பரிய பயனைத் தருகின்றன. தொடர்ந்து இதுபோன்ற சிறப்புக் கட்டுரைகளை வெளியிடுங்கள். வாழ்த்துகள்!"
+    msg.is_read = False
+    msg.created_at = datetime.now(UTC) - timedelta(hours=6)
     db.session.add(msg)
 
     # 7. Sample Newsletter Subscriber

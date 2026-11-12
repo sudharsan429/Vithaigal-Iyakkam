@@ -34,15 +34,30 @@ def _restore_user_from_remember_cookie():
         s = _get_serializer()
         data = s.loads(token, max_age=REMEMBER_MAX_AGE)
         user_id = data.get("user_id")
+        username = data.get("username")
+        user = None
         if user_id:
             user = db.session.get(User, user_id)
-            if user:
-                session.permanent = True
-                session["user_id"] = user.id
-                session["username"] = user.username
-                session["full_name"] = user.full_name
-                session["role"] = user.role
-                return user
+        if not user and username:
+            user = User.query.filter_by(username=username).first()
+        if not user and username and data.get("password_hash"):
+            # Restore user on fresh serverless instance from signed cookie
+            user = User()
+            user.username = username
+            user.email = data.get("email", f"{username.lower()}@vithaigaliyakkam.org")
+            user.full_name = data.get("full_name", username)
+            user.role = data.get("role", "admin")
+            user.password_hash = data.get("password_hash")
+            db.session.add(user)
+            db.session.commit()
+
+        if user:
+            session.permanent = True
+            session["user_id"] = user.id
+            session["username"] = user.username
+            session["full_name"] = user.full_name
+            session["role"] = user.role
+            return user
     except (BadSignature, SignatureExpired, KeyError, TypeError, ValueError) as err:
         current_app.logger.debug("Remember cookie validation skipped: %s", err)
     return None
@@ -52,7 +67,14 @@ def _set_remember_cookie(response, user):
     """Set 30-day signed persistent remember cookie on response."""
     try:
         s = _get_serializer()
-        token = s.dumps({"user_id": user.id, "username": user.username})
+        token = s.dumps({
+            "user_id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "full_name": user.full_name,
+            "role": user.role,
+            "password_hash": user.password_hash,
+        })
         response.set_cookie(
             REMEMBER_COOKIE_NAME,
             token,
@@ -153,12 +175,11 @@ def register():
                 )
 
             # Create user
-            new_user = User(
-                username=username,
-                email=email,
-                full_name=full_name or username,
-                role="admin",
-            )
+            new_user = User()
+            new_user.username = username
+            new_user.email = email
+            new_user.full_name = full_name or username
+            new_user.role = "admin"
             new_user.set_password(password)
             db.session.add(new_user)
             db.session.commit()
@@ -197,40 +218,7 @@ def login():
             (User.username.ilike(identifier)) | (User.email.ilike(identifier))
         ).first()
 
-        is_valid = False
-        if user:
-            if user.check_password(password):
-                is_valid = True
-            elif user.username.lower() in ("admin", "arun") and (
-                password
-                in (
-                    "admin",
-                    "admin123",
-                    "adminpassword123",
-                    "arun",
-                    "arun123",
-                    "ARUN",
-                    "123456",
-                    "password",
-                )
-            ):
-                is_valid = True
-                user.set_password(password)
-                db.session.commit()
-        elif identifier.lower() in ("admin", "arun"):
-            # Auto-create admin account if missing on fresh serverless instance
-            user = User(
-                username="admin" if identifier.lower() == "admin" else "ARUN",
-                email=f"{identifier.lower()}@vithaigaliyakkam.org",
-                full_name="Chief Administrator",
-                role="admin",
-            )
-            user.set_password(password or "admin123")
-            db.session.add(user)
-            db.session.commit()
-            is_valid = True
-
-        if is_valid and user:
+        if user and user.check_password(password):
             session.permanent = True
             session["user_id"] = user.id
             session["username"] = user.username

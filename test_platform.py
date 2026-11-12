@@ -346,12 +346,11 @@ class TestVithaigalIyakkam(unittest.TestCase):
         )
 
         # 2. Ensure test message
-        msg = ContactMessage(
-            name="Kavitha Raman",
-            email="kavitha@example.com",
-            subject="Agricultural Article Inquiry",
-            message="Thank you for publishing valuable agriculture guides.",
-        )
+        msg = ContactMessage()
+        msg.name = "Kavitha Raman"
+        msg.email = "kavitha@example.com"
+        msg.subject = "Agricultural Article Inquiry"
+        msg.message = "Thank you for publishing valuable agriculture guides."
         db.session.add(msg)
         db.session.commit()
 
@@ -570,6 +569,7 @@ class TestVithaigalIyakkam(unittest.TestCase):
         # Cleanup
         db.session.delete(art)
         User.query.filter_by(username="admin_blocks_user").delete()
+        User.query.filter_by(username="admin").delete()
         db.session.commit()
         print("[PASS] test_15_dynamic_summary_and_content_blocks")
 
